@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>シフト表作成ツール</title>
+<meta name="description" content="入りたい時間・入れない時間を入力して、シフト表を自動で組めるツール">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <h1>シフト表作成ツール</h1>
+  <nav class="tabs" role="tablist">
+    <button role="tab" data-tab="setup" aria-selected="true">1 枠とスタッフ</button>
+    <button role="tab" data-tab="prefs" aria-selected="false">2 希望を入力</button>
+    <button role="tab" data-tab="board" aria-selected="false">3 シフト表</button>
+  </nav>
+  <div class="tools">
+    <button id="btn-sample" class="ghost">サンプルを読み込む</button>
+    <button id="btn-save" class="ghost">JSON保存</button>
+    <label class="ghost btn-like">JSON読込<input type="file" id="file-load" accept=".json" hidden></label>
+  </div>
+</header>
+
+<main>
+  <!-- 設定 -->
+  <section id="tab-setup" class="panel">
+    <div class="cols">
+      <div>
+        <h2>期間</h2>
+        <div class="row">
+          <label>開始日<input type="date" id="start"></label>
+          <label>終了日<input type="date" id="end"></label>
+        </div>
+        <h2>時間帯の枠</h2>
+        <p class="hint">1日の中の枠と、各枠に必要な人数を決めます。</p>
+        <ul id="slot-list" class="edit-list"></ul>
+        <button id="add-slot" class="ghost">枠を追加</button>
+      </div>
+      <div>
+        <h2>スタッフ</h2>
+        <p class="hint">週の上限回数は、1週間(月〜日)に入れる枠の最大数です。空欄なら制限なし。</p>
+        <ul id="staff-list" class="edit-list"></ul>
+        <form id="staff-form" class="row">
+          <label class="grow">名前<input type="text" id="staff-name" required maxlength="20"></label>
+          <label>週の上限<input type="number" id="staff-max" min="1" max="21" placeholder="なし"></label>
+          <button type="submit" class="primary">追加</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- 希望 -->
+  <section id="tab-prefs" class="panel" hidden>
+    <div class="prefs-head">
+      <label>スタッフ<select id="pref-staff"></select></label>
+      <ul class="legend">
+        <li><i class="sw sw-ok"></i>入れる</li>
+        <li><i class="sw sw-want"></i>入りたい</li>
+        <li><i class="sw sw-no"></i>入れない</li>
+      </ul>
+      <p class="hint">セルをクリックすると 入れる → 入りたい → 入れない の順に切り替わります。日付をクリックすると、その日を終日「入れない」にできます。</p>
+    </div>
+    <div id="pref-grid" class="grid-wrap"></div>
+  </section>
+
+  <!-- シフト表 -->
+  <section id="tab-board" class="panel" hidden>
+    <div class="board-bar">
+      <button id="btn-auto" class="primary">自動で割り当てる</button>
+      <button id="btn-clear" class="ghost">割り当てを消す</button>
+      <span class="spacer"></span>
+      <button id="btn-csv" class="ghost">CSV出力</button>
+      <button id="btn-print" class="ghost">印刷</button>
+    </div>
+    <div class="board-body">
+      <div id="board-grid" class="grid-wrap"></div>
+      <aside>
+        <h2>確認事項</h2>
+        <ul id="warnings" class="warnings"></ul>
+        <h2>スタッフごとの回数</h2>
+        <table id="summary" class="summary"></table>
+      </aside>
+    </div>
+    <p class="hint">セルをクリックすると、その枠に入る人を手動で変更できます。</p>
+  </section>
+</main>
+
+<dialog id="dlg">
+  <form method="dialog">
+    <h3 id="dlg-title"></h3>
+    <p id="dlg-need" class="hint"></p>
+    <ul id="dlg-list" class="dlg-list"></ul>
+    <button class="primary">閉じる</button>
+  </form>
+</dialog>
+
+<script src="scheduler.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
